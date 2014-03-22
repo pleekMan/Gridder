@@ -23,12 +23,13 @@ abstract public class Grid {
 		subDivsX = new float[subDivsCount[0]];
 		subDivsY = new float[subDivsCount[1]];
 		subDivsZ = new float[subDivsCount[2]];
-		
+
 		midPoints = new float[3];
 
-		setInterpolationType(1);
-		setMidpoint(0.9f, 0.5f, 0.5f);
-		fillSubDivisions();
+		setInterpolationType(Gridder.QUADRATIC);
+		setMidpoint(0.5f, 0.5f, 0.5f);
+		buildInterpolations();
+		// fillSubDivisions();
 
 	}
 
@@ -42,7 +43,6 @@ abstract public class Grid {
 		subDivsCount[1] = 10;
 		subDivsCount[2] = 10;
 
-
 	}
 
 	abstract public void draw();
@@ -55,18 +55,10 @@ abstract public class Grid {
 			interpolationType = Gridder.LINEAR;
 		}
 		/*
-		switch (type) {
-		case 0:
-			interpolationType = Gridder.LINEAR;
-			break;
-		case 1:
-			interpolationType = Gridder.QUADRATIC;
-			break;
-		default:
-			interpolationType = Gridder.LINEAR;
-			break;
-		}
-		*/
+		 * switch (type) { case 0: interpolationType = Gridder.LINEAR; break;
+		 * case 1: interpolationType = Gridder.QUADRATIC; break; default:
+		 * interpolationType = Gridder.LINEAR; break; }
+		 */
 
 	}
 
@@ -81,23 +73,34 @@ abstract public class Grid {
 			midPoints[2] = 0.5f;
 			System.out.println("+ Gridder Warning :: Linear interpolations do not have a variable midPoint");
 		}
-		
+
 		buildInterpolations();
 	}
 
 	private void buildInterpolations() {
-		
-		//CREATING THE QUADRATIC GRADIENT FROM 0 TO 1 (NOT FROM POINT TO POINT IN SPACE)
 
+		// CREATING THE QUADRATIC GRADIENT FROM 0 TO 1 (NOT FROM POINT TO POINT
+		// IN SPACE)
+		// X
 		for (int t = 0; t < subDivsCount[0]; t++) {
-
 			float normalizedResolution = (float) t / subDivsCount[0];
+			subDivsX[t] = 2 * (1 - (normalizedResolution)) * (normalizedResolution) * midPoints[0] + p5.pow((normalizedResolution), 2) * 1;
+			// ENTERA: subDivsX[t] = p5.pow((1 - normalizeResolution),2) * 0 +
+			// 2*(1 - (normalizeResolution)) * (normalizeResolution) *
+			// midPoints[0] + p5.pow((normalizeResolution),2) * 1;
+			// System.out.println("Line " + t + " X at:" + xSubT);
+		}
 
-			subDivsX[t] = 2*(1 - (normalizedResolution)) * (normalizedResolution) * midPoints[0] + p5.pow((normalizedResolution),2) * 1;
-			//ENTERA: subDivsX[t] = p5.pow((1 - normalizeResolution),2) * 0 + 2*(1 - (normalizeResolution)) * (normalizeResolution) * midPoints[0] + p5.pow((normalizeResolution),2) * 1;
+		// Y
+		for (int t = 0; t < subDivsCount[1]; t++) {
+			float normalizedResolution = (float) t / subDivsCount[1];
+			subDivsY[t] = 2 * (1 - (normalizedResolution)) * (normalizedResolution) * midPoints[1] + p5.pow((normalizedResolution), 2) * 1;
+		}
 
-			//System.out.println("Line " + t + " X at:" + xSubT);
-
+		// Z
+		for (int t = 0; t < subDivsCount[2]; t++) {
+			float normalizedResolution = (float) t / subDivsCount[2];
+			subDivsZ[t] = 2 * (1 - (normalizedResolution)) * (normalizedResolution) * midPoints[2] + p5.pow((normalizedResolution), 2) * 1;
 		}
 	}
 
